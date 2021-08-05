@@ -1,0 +1,13 @@
+.icon-lg {
+  font-size: 32px !important;
+  color: #424242 !important;
+}
+
+.clickable:hover {
+  cursor: pointer !important;
+}
+
+table tbody tr:hover {
+  cursor: pointer !important;
+  background-color: #FAFAFA !important;
+}

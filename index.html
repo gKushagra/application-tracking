@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="./vendors/bootstrap/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <!-- Bootstrap datepicker plugin -->
+    <link rel="stylesheet" href="./vendors/bootstrap-datetime/bootstrap-datepicker3.css">
+    <link rel="stylesheet" href="./style.css">
+
+    <title>Job application Tracking</title>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <!-- toolbar -->
+        <div class="container-md">
+            <div class="row mx-1 my-1 px-1 py-1 border-bottom border-1">
+                <!-- branding -->
+                <div class="col-md-8 col-12">
+                    <span class="display-6 mx-1 my-1 px-1 py-1">Track Job Applications</span>
+                </div>
+                <!-- export, account -->
+                <div class="col-md-4 col-12 d-flex flex-row justify-content-end">
+                    <i id="add-record" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        class="bi bi-file-plus icon-lg mx-1 my-1 px-1 py-1 clickable"></i>
+                    <i id="export-btn" class="bi bi-file-earmark-arrow-down icon-lg mx-1 my-1 px-1 py-1 clickable"></i>
+                    <i id="account-btn" class="bi bi-person-circle icon-lg mx-1 my-1 px-1 py-1 clickable"></i>
+                </div>
+            </div>
+        </div>
+        <!-- body -->
+        <div class="container-md">
+            <!-- table -->
+            <div class="container-md">
+                <div class="row mx-1 my-3 px-1 py-4">
+                    <div class="table-responsive">
+                        <table id="applications-table" class="table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Company</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Link</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
+                                            data-bs-target="#viewRecord" aria-controls="viewRecord">
+                                            Toggle right offcanvas
+                                        </button> -->
+    <!-- Off Canvas Right -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="viewRecord" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header">
+            <h5 id="offcanvasRightLabel"></h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Application</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="new-application">
+                        <div class="mb-3">
+                            <input class="form-control" list="companiesList" id="companiesListInput" type="text"
+                                name="company" placeholder="Search Companies..." aria-label="default input example">
+                            <datalist id="companiesList"></datalist>
+                        </div>
+                        <div class="mb-3">
+                            <input class="form-control" list="rolesList" id="rolesListInput" type="text" name="position"
+                                placeholder="Search positions..." aria-label="default input example">
+                            <datalist id="rolesList"></datalist>
+                        </div>
+                        <div class="mb-3">
+                            <input class="form-control" list="statusList" name="status" id="statusListInput"
+                                placeholder="Search application status that may apply...">
+                            <datalist id="statusList">
+                                <option value="To Apply">
+                                <option value="Applied">
+                                <option value="Telephonic Interview">
+                                <option value="Coding Test">
+                                <option value="Technical Round 1">
+                                <option value="Technical Round 2">
+                                <option value="Technical Round 3">
+                                <option value="Behaviour Round">
+                                <option value="Offer">
+                                <option value="Accepted Offer">
+                            </datalist>
+                        </div>
+                        <div id="datepicker-container" class="mb-3">
+                            <input class="form-control" id="date" name="date" placeholder="Applied On MM/DD/YYY"
+                                type="text" aria-label="default input example">
+                        </div>
+                        <div class="mb-3">
+                            <input class="form-control" type="text" name="link" placeholder="Link"
+                                aria-label="default input example">
+                        </div>
+                        <div class="mb-3">
+                            <input class="form-control" type="text" name="username" placeholder="Username, Email"
+                                aria-label="default input example">
+                        </div>
+                        <div class="mb-3">
+                            <input class="form-control" type="text" name="password" placeholder="Password"
+                                aria-label="default input example">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="save" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./vendors/jquery/jquery-3.6.0.min.js"></script>
+    <script src="./vendors/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="./vendors/bootstrap-datetime/bootstrap-datepicker.min.js"></script>
+    <script src="./index.js" type="module"></script>
+</body>
+
+</html>
