@@ -9,5 +9,10 @@
 
 table tbody tr:hover {
   cursor: pointer !important;
-  background-color: #FAFAFA !important;
+  background-color: #fafafa !important;
+}
+
+.custom-link {
+  text-decoration: underline;
+  color: #1976d2;
 }

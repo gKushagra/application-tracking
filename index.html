@@ -29,6 +29,8 @@
                 </div>
                 <!-- export, account -->
                 <div class="col-md-4 col-12 d-flex flex-row justify-content-end">
+                    <i id="resume" data-bs-toggle="modal" data-bs-target="#resumeModal"
+                        class="bi bi-file-earmark-text icon-lg mx-1 my-1 px-1 py-1 clickable"></i>
                     <i id="add-record" data-bs-toggle="modal" data-bs-target="#exampleModal"
                         class="bi bi-file-plus icon-lg mx-1 my-1 px-1 py-1 clickable"></i>
                     <i id="export-btn" class="bi bi-file-earmark-arrow-down icon-lg mx-1 my-1 px-1 py-1 clickable"></i>
@@ -99,6 +101,7 @@
                             <datalist id="statusList">
                                 <option value="To Apply">
                                 <option value="Applied">
+                                <option value="Rejected">
                                 <option value="Telephonic Interview">
                                 <option value="Coding Test">
                                 <option value="Technical Round 1">
@@ -128,8 +131,30 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="close-application-modal-btn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" id="save" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- resume dialog -->
+    <div class="modal fade" id="resumeModal" tabindex="-1" aria-labelledby="resumeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resumeModalLabel">Resume</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="resumeUpload" class="form-label">Upload New Resume</label>
+                        <input class="form-control" type="file" id="resumeUpload">
+                    </div>
+                    <div class="mb-3">
+                        <div class="mb-3">Resumes Uploaded</div>
+                        <ul id="resumes-list" class="list-group"></ul>
+                    </div>
                 </div>
             </div>
         </div>
