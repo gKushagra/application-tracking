@@ -8,6 +8,10 @@ import { companies, roles } from "./static-data.js";
     let table = document.getElementById('applications-table');
     let offCanvasEl = document.getElementById('viewRecord');
     let offCanvas = new bootstrap.Offcanvas(offCanvasEl);
+    let todoTemplateEl = document.getElementById('todo-template');
+    let contactTemplateEl = document.getElementById('contact-template');
+    todoTemplateEl.hidden = true;
+    contactTemplateEl.hidden = true;
 
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
@@ -25,7 +29,7 @@ import { companies, roles } from "./static-data.js";
             });
         } else {
             applications = getFromLocalStorage('applications');
-
+            // show applications
             for (let i = 0; i < applications.length; i++) {
                 let newRowEl = document.createElement('tr');
                 newRowEl.setAttribute('data-app-id', applications[i].id);
@@ -38,7 +42,7 @@ import { companies, roles } from "./static-data.js";
                         let cell = document.createElement('td');
                         if (key === 'link') {
                             let linkEl = document.createElement('a');
-                            if (!applications[i][key].includes('http://')) {
+                            if (applications[i][key].indexOf('http://') >= 0) {
                                 linkEl.href = 'http://' + applications[i][key];
                             } else {
                                 linkEl.href = applications[i][key];
@@ -58,6 +62,7 @@ import { companies, roles } from "./static-data.js";
                 table.querySelector('tbody').appendChild(newRowEl);
             }
 
+            // open offcanvas
             table.querySelector('tbody').querySelectorAll('tr').forEach(row => {
                 row.addEventListener('click', function (event) {
                     // open slideover
@@ -77,7 +82,7 @@ import { companies, roles } from "./static-data.js";
                     if (currentApplication.length > 0) {
                         // patch data
                         modifyForm(true);
-                        controlsVisibility(false);
+                        controlsVisibility(true);
                         // add listener to edit button
                         let editAppBtn = document.getElementById('edit-application-btn');
                         let saveChangesBtn = document.getElementById('edit-application-save-btn');
@@ -119,8 +124,107 @@ import { companies, roles } from "./static-data.js";
                                 }
                             });
                         }
-                        // handle contacts
-                        // handle todos
+                        // show contacts
+                        let contactsList = document.getElementById('contacts').querySelector('.list-group');
+                        currentApplication[0].contacts.forEach(function (contact) {
+                            if (!contactsList.querySelector(`[data-contact-id="${contact.id}"]`)) {
+                                let newContactEl = createNewContactEl(contact);
+                                contactsList.appendChild(newContactEl);
+                            }
+                        });
+                        // add new contact
+                        let addContactBtn = document.getElementById('new-contact-btn');
+                        addContactBtn.addEventListener('click', function (addContactEv) {
+                            addContactEv.stopPropagation();
+                            if (!document.getElementById('new-contact-name').value ||
+                                document.getElementById('new-contact-name').value === '') return;
+                            let newContactObj = {};
+                            newContactObj['id'] = uuidv4();
+                            newContactObj['name'] = document.getElementById('new-contact-name').value;
+                            newContactObj['email'] = document.getElementById('new-contact-email').value;
+                            newContactObj['cell'] = document.getElementById('new-contact-cell').value;
+                            currentApplication[0].contacts.push(newContactObj);
+                            saveToLocalStorage('applications', applications);
+                            let newContactEl = createNewContactEl(newContactObj);
+                            contactsList.appendChild(newContactEl);
+                        });
+                        // create new contact el from contact template
+                        function createNewContactEl(contact) {
+                            let newContactEl = contactTemplateEl.cloneNode(true);
+                            newContactEl.hidden = false;
+                            newContactEl.id = contact.id;
+                            newContactEl.setAttribute('data-app-id', currentApplication[0].id);
+                            newContactEl.setAttribute('data-contact-id', contact.id);
+                            newContactEl.querySelector('h5').innerText = contact.name;
+                            newContactEl.querySelector('p').innerText = contact.email;
+                            newContactEl.querySelector('.cell').innerText = contact.cell;
+                            newContactEl.querySelector('.btn-close').addEventListener('click', function (delContactEv) {
+                                currentApplication[0].contacts = currentApplication[0].contacts.filter(function (ct) {
+                                    return ct.id !== newContactEl.id
+                                });
+                                saveToLocalStorage('applications', applications);
+                                contactsList.querySelectorAll('.list-group-item').forEach(function (li) {
+                                    if (li.id === newContactEl.id) {
+                                        contactsList.removeChild(li);
+                                    }
+                                });
+                            });
+                            return newContactEl;
+                        }
+                        // show todos
+                        let todoListEl = document.getElementById('todo').querySelector('ul');
+                        currentApplication[0].todo.forEach(function (todo) {
+                            if (!todoListEl.querySelector(`[data-todo-id="${todo.id}"]`)) {
+                                let newTodoEl = createTodoLiEl(todo);
+                                todoListEl.appendChild(newTodoEl);
+                            }
+                        });
+                        // add new todo
+                        let todoAddBtn = document.getElementById('new-todo-btn');
+                        todoAddBtn.addEventListener('click', function (todoBtnClickEv) {
+                            todoBtnClickEv.stopPropagation();
+                            if (!document.getElementById('todo-input').value ||
+                                document.getElementById('todo-input').value === '') return;
+                            let newTodoObj = {};
+                            newTodoObj['id'] = uuidv4();
+                            newTodoObj['isChecked'] = false;
+                            newTodoObj['description'] = document.getElementById('todo-input').value;
+                            currentApplication[0].todo.push(newTodoObj);
+                            saveToLocalStorage('applications', applications);
+                            let newTodoEl = createTodoLiEl(newTodoObj);
+                            todoListEl.appendChild(newTodoEl);
+                        });
+                        // create new todo li from todo template
+                        function createTodoLiEl(todoObj) {
+                            let newTodoEl = todoTemplateEl.cloneNode(true);
+                            newTodoEl.hidden = false;
+                            newTodoEl.id = todoObj.id;
+                            newTodoEl.setAttribute('data-app-id', currentApplication[0].id);
+                            newTodoEl.setAttribute('data-todo-id', todoObj.id);
+                            newTodoEl.querySelector('#todo-descp').innerText = todoObj.description;
+                            newTodoEl.querySelector('input').checked = todoObj.isChecked;
+                            newTodoEl.querySelector('input').addEventListener('click', function (todoCheckedEv) {
+                                let toChangeTodo = currentApplication[0].todo.filter(function (todo) {
+                                    return todo.id === newTodoEl.id
+                                });
+                                if (toChangeTodo.length > 0) {
+                                    toChangeTodo[0].isChecked = todoCheckedEv.target.checked;
+                                    saveToLocalStorage('applications', applications);
+                                }
+                            });
+                            newTodoEl.querySelector('.btn-close').addEventListener('click', function (delTodoEv) {
+                                currentApplication[0].todo = currentApplication[0].todo.filter(function (todo) {
+                                    return todo.id !== newTodoEl.id
+                                });
+                                saveToLocalStorage('applications', applications);
+                                todoListEl.querySelectorAll('li').forEach(function (li) {
+                                    if (li.id === newTodoEl.id) {
+                                        todoListEl.removeChild(li);
+                                    }
+                                });
+                            });
+                            return newTodoEl;
+                        }
                     }
                 });
             });
@@ -160,7 +264,7 @@ import { companies, roles } from "./static-data.js";
                             return resume.id === selectedResumeId
                         });
                         if (selectedResume.length > 0) {
-                            console.log(selectedResume[0]);
+                            // console.log(selectedResume[0]);
                             // create object url
                             let tempUrl = blobToURL(dataURItoBlob(selectedResume[0].dataUrl));
                             let tempLink = document.createElement('a');
@@ -176,7 +280,6 @@ import { companies, roles } from "./static-data.js";
                     removeBtn.setAttribute('data-id', r.id);
                     // remove resume
                     removeBtn.addEventListener('click', function (removeResumeEvent) {
-                        console.log('here');
                         let selectedResumeId = removeResumeEvent.target.getAttribute('data-id');
                         let selectedResume = resumes.filter(function (resume) {
                             return resume.id === selectedResumeId
@@ -199,7 +302,7 @@ import { companies, roles } from "./static-data.js";
         // upload new resume
         let fileInput = document.getElementById('resumeUpload');
         fileInput.addEventListener('change', function (fileSelectEvent) {
-            console.log(fileSelectEvent.target.files);
+            // console.log(fileSelectEvent.target.files);
             fileSelectEvent.target.files[0]
                 .arrayBuffer()
                 .then(function (arrayBuffer) {
@@ -210,7 +313,7 @@ import { companies, roles } from "./static-data.js";
                         resumeObj['filename'] = fileSelectEvent.target.files[0].name;
                         resumeObj['dataUrl'] = e.target.result;
                         resumeObj['uploadDate'] = new Date();
-                        console.log(resumeObj);
+                        // console.log(resumeObj);
                         resumes.push(resumeObj);
                         saveToLocalStorage('resumes', resumes);
                         fileInput.value = null;
@@ -243,7 +346,7 @@ import { companies, roles } from "./static-data.js";
             seqNoEl.innerText = applications.length + 1;
             newRowEl.appendChild(seqNoEl);
             form.querySelectorAll('input').forEach(function (ctrl) {
-                console.log(ctrl.value);
+                // console.log(ctrl.value);
                 newApplication[ctrl.name] = ctrl.value;
                 if (["company", "position", "date", "link"].indexOf(ctrl.name) >= 0) {
                     let cell = document.createElement('td');
@@ -314,7 +417,20 @@ import { companies, roles } from "./static-data.js";
 
     /** TODO */
     exportTableBtn.addEventListener('click', function (event) {
-        console.log('export table btn');
+        // console.log('export table btn');
+        let blob = new Blob([JSON.stringify(getFromLocalStorage('applications'))],
+            { type: 'application/json' });
+        let fileUrl = blobToURL(blob);
+        let tempLink = document.createElement('a');
+        tempLink.href = fileUrl;
+        tempLink.download = `applications-${new Date().toLocaleDateString()}`;
+        tempLink.target = '_blank';
+        tempLink.click();
+        setTimeout(function () {
+            tempLink = null;
+            fileUrl = null;
+            blob = null;
+        }, 2000)
     });
 
     /** TODO */

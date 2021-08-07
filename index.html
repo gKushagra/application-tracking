@@ -51,7 +51,7 @@
                 <div class="row mx-1 my-3 px-1 py-4">
                     <div class="table-responsive">
                         <table id="applications-table" class="table border shadow-sm rounded bg-white">
-                            <thead class="">
+                            <thead class="bg-light1">
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Company</th>
@@ -76,14 +76,14 @@
             </h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body px-4">
-            <form id="edit-application">
-                <div class="d-flex flex-column flex-nowrap">
-                    <!-- Application Details -->
-                    <div class="mt-3">
-                        <h3 class="mx-1">Details</h3>
-                    </div>
-                    <hr>
+        <div class="offcanvas-body px-5">
+            <div class="d-flex flex-column flex-nowrap">
+                <!-- Application Details -->
+                <div class="mt-3">
+                    <h3 class="mx-1">Details</h3>
+                </div>
+                <hr>
+                <form id="edit-application" class="d-flex flex-column flex-nowrap">
                     <div class="d-flex flex-row flex-nowrap justify-content-start">
                         <button type="button" class="btn btn-secondary mx-1 my-1 px-1 py-1"
                             id="edit-application-btn">Edit</button>
@@ -137,51 +137,53 @@
                         <input class="form-control" type="text" name="password" placeholder="Password"
                             aria-label="default input example">
                     </div>
-                    <!-- Contacts -->
-                    <div class="mt-3">
-                        <h3 class="mx-1">Contacts</h3>
-                    </div>
-                    <hr>
-                    <div id="contacts">
-                        <div class="d-flex flex-column flex-nowrap">
-                            <div class="card shadow-sm mx-1 my-1 px-2 py-2 bg-light">
-                                <h5 class="mx-1">New Contact</h5>
-                                <form id="new-contact" name="new-contact">
-                                    <div class="mb-3">
-                                        <input class="form-control" type="text" name="name" placeholder="Name"
-                                            aria-label="default input example">
-                                    </div>
-                                    <div class="mb-3">
-                                        <input class="form-control" type="email" name="email" placeholder="Email"
-                                            aria-label="default input example">
-                                    </div>
-                                    <div class="mb-3">
-                                        <input class="form-control" type="number" name="number" placeholder="Number"
-                                            aria-label="default input example">
-                                    </div>
-                                    <button type="button" id="new-contact-btn" class="btn btn-primary">Save</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- TODO's -->
-                    <div class="mt-3">
-                        <h3 class="mx-1">Todo's</h3>
-                    </div>
-                    <hr>
-                    <div id="todo">
-                        <div class="d-flex flex-column flex-nowrap">
-                            <div class="card shadow-sm mx-1 my-1 px-2 py-2 bg-light">
-                                <form id="new-todo" name="new-todo" class="d-flex flex-row flex-nowrap">
-                                    <input class="form-control" type="text" name="description" placeholder="Description"
-                                        aria-label="default input example">
-                                    <button type="button" id="new-todo-btn" class="btn btn-primary">Add</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                </form>
+                <!-- Contacts -->
+                <div class="mt-3">
+                    <h3 class="mx-1">Contacts</h3>
                 </div>
-            </form>
+                <hr>
+                <div id="contacts">
+                    <div class="d-flex flex-column flex-nowrap">
+                        <div class="card shadow-sm mx-1 my-1 px-2 py-2 bg-light">
+                            <form id="new-contact" name="new-contact">
+                                <div class="mb-3">
+                                    <input class="form-control" type="text" id="new-contact-name" name="name" placeholder="Name"
+                                        aria-label="default input example">
+                                </div>
+                                <div class="mb-3">
+                                    <input class="form-control" type="email" id="new-contact-email" name="email" placeholder="Email"
+                                        aria-label="default input example">
+                                </div>
+                                <div class="mb-3">
+                                    <input class="form-control" type="number" id="new-contact-cell" name="number" placeholder="Cell"
+                                        aria-label="default input example">
+                                </div>
+                                <button type="button" id="new-contact-btn" class="btn btn-primary">Add Contact</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="list-group my-1 py-1 px-1"></div>
+                </div>
+                <!-- TODO's -->
+                <div class="mt-3">
+                    <h3 class="mx-1">Todo's</h3>
+                </div>
+                <hr>
+                <div id="todo">
+                    <div class="d-flex flex-column flex-nowrap">
+                        <div class="card shadow-sm mx-1 my-1 px-2 py-2 bg-light">
+                            <form id="new-todo" name="new-todo" class="d-flex flex-row flex-nowrap">
+                                <input class="form-control" type="text" id="todo-input" name="description" placeholder="Description"
+                                    aria-label="default input example">
+                                <button type="button" id="new-todo-btn" class="btn btn-primary">Add</button>
+                            </form>
+                        </div>
+                    </div>
+                    <ul class="list-group my-1 py-1 px-1"></ul>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -269,6 +271,24 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Todo template -->
+    <li id="todo-template" hidden=true class="list-group-item">
+        <span class="d-flex flex-row flex-nowrap">
+            <input class="form-check-input me-1" type="checkbox" value="">
+            <span id="todo-descp">Third checkbox</span>
+            <small class="ms-auto"><span class="btn-close"></span></small>
+        </span>
+    </li>
+    <!-- Contact template -->
+    <div id="contact-template" hidden=true class="list-group-item">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Sean Parker</h5>
+            <small><span class="btn-close"></span></small>
+        </div>
+        <p class="mb-1">sean@apple.com</p>
+        <small class="cell">+19876543210</small>
     </div>
 
     <script src="./vendors/jquery/jquery-3.6.0.min.js"></script>
