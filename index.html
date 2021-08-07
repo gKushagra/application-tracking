@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
+    <link rel="shortcut icon" href="./assets/journal-text.svg" type="image/svg">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="./vendors/bootstrap/bootstrap.min.css">
     <!-- Bootstrap Icons -->
@@ -14,27 +15,32 @@
     <link rel="stylesheet" href="./vendors/bootstrap-datetime/bootstrap-datepicker3.css">
     <link rel="stylesheet" href="./style.css">
 
-    <title>Job application Tracking</title>
+    <title>Job Applications</title>
 </head>
 
-<body>
+<body class="bg-light">
 
     <div class="container-fluid">
         <!-- toolbar -->
-        <div class="container-md">
-            <div class="row mx-1 my-1 px-1 py-1 border-bottom border-1">
+        <div class="container-md my-1 border border-1 shadow-sm rounded bg-white">
+            <div class="row">
                 <!-- branding -->
-                <div class="col-md-8 col-12">
-                    <span class="display-6 mx-1 my-1 px-1 py-1">Track Job Applications</span>
-                </div>
+                <!-- <div class="col-md-8 col-12">
+                    <i class="bi bi-journal-text icon-lg"></i>
+                    if headline
+                    <span class="display-6 mx-1 my-1 px-1 py-1"></span>
+                </div> -->
                 <!-- export, account -->
-                <div class="col-md-4 col-12 d-flex flex-row justify-content-end">
+                <div class="col-12 d-flex flex-row justify-content-start">
                     <i id="resume" data-bs-toggle="modal" data-bs-target="#resumeModal"
-                        class="bi bi-file-earmark-text icon-lg mx-1 my-1 px-1 py-1 clickable"></i>
+                        class="bi bi-file-earmark-text icon-sm mx-1 my-1 px-1 py-1 clickable" data-toggle="tooltip"
+                        data-placement="bottom" title="Resume"></i>
                     <i id="add-record" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                        class="bi bi-file-plus icon-lg mx-1 my-1 px-1 py-1 clickable"></i>
-                    <i id="export-btn" class="bi bi-file-earmark-arrow-down icon-lg mx-1 my-1 px-1 py-1 clickable"></i>
-                    <i id="account-btn" class="bi bi-person-circle icon-lg mx-1 my-1 px-1 py-1 clickable"></i>
+                        class="bi bi-file-plus icon-sm mx-1 my-1 px-1 py-1 clickable" data-toggle="tooltip"
+                        data-placement="bottom" title="Add Application"></i>
+                    <i id="export-btn" class="bi bi-file-earmark-arrow-down icon-sm mx-1 my-1 px-1 py-1 clickable"
+                        data-toggle="tooltip" data-placement="bottom" title="Export"></i>
+                    <!-- <i id="account-btn" class="bi bi-person-circle icon-sm mx-1 my-1 px-1 py-1 clickable"></i> -->
                 </div>
             </div>
         </div>
@@ -44,8 +50,8 @@
             <div class="container-md">
                 <div class="row mx-1 my-3 px-1 py-4">
                     <div class="table-responsive">
-                        <table id="applications-table" class="table">
-                            <thead class="table-light">
+                        <table id="applications-table" class="table border shadow-sm rounded bg-white">
+                            <thead class="">
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Company</th>
@@ -62,17 +68,121 @@
         </div>
     </div>
 
-    <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
-                                            data-bs-target="#viewRecord" aria-controls="viewRecord">
-                                            Toggle right offcanvas
-                                        </button> -->
     <!-- Off Canvas Right -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="viewRecord" aria-labelledby="offcanvasRightLabel">
         <div class="offcanvas-header">
-            <h5 id="offcanvasRightLabel"></h5>
+            <h5 id="offcanvasRightLabel">
+
+            </h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body"></div>
+        <div class="offcanvas-body px-4">
+            <form id="edit-application">
+                <div class="d-flex flex-column flex-nowrap">
+                    <!-- Application Details -->
+                    <div class="mt-3">
+                        <h3 class="mx-1">Details</h3>
+                    </div>
+                    <hr>
+                    <div class="d-flex flex-row flex-nowrap justify-content-start">
+                        <button type="button" class="btn btn-secondary mx-1 my-1 px-1 py-1"
+                            id="edit-application-btn">Edit</button>
+                    </div>
+                    <div class="d-flex flex-row flex-nowrap justify-content-end">
+                        <button type="button" class="btn btn-primary mx-1 my-1 px-1 py-1"
+                            id="edit-application-save-btn">Save</button>
+                        <button type="button" class="btn btn-secondary mx-1 my-1 px-1 py-1"
+                            id="edit-application-cancel-btn">Cancel</button>
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" list="companiesList" id="companiesListInput-offcanvas" type="text"
+                            name="company" placeholder="Search Companies..." aria-label="default input example">
+                        <datalist id="companiesList"></datalist>
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" list="rolesList" id="rolesListInput-offcanvas" type="text"
+                            name="position" placeholder="Search positions..." aria-label="default input example">
+                        <datalist id="rolesList"></datalist>
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" list="statusList" name="status" id="statusListInput-offcanvas"
+                            placeholder="Search application status that may apply...">
+                        <datalist id="statusList">
+                            <option value="To Apply">
+                            <option value="Applied">
+                            <option value="Rejected">
+                            <option value="Telephonic Interview">
+                            <option value="Coding Test">
+                            <option value="Technical Round 1">
+                            <option value="Technical Round 2">
+                            <option value="Technical Round 3">
+                            <option value="Behaviour Round">
+                            <option value="Offer">
+                            <option value="Accepted Offer">
+                        </datalist>
+                    </div>
+                    <div id="datepicker-container" class="mb-3">
+                        <input class="form-control" id="date-offcanvas" name="date" placeholder="Applied On MM/DD/YYY"
+                            type="text" aria-label="default input example">
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" type="text" name="link" placeholder="Link"
+                            aria-label="default input example">
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" type="text" name="username" placeholder="Username, Email"
+                            aria-label="default input example">
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" type="text" name="password" placeholder="Password"
+                            aria-label="default input example">
+                    </div>
+                    <!-- Contacts -->
+                    <div class="mt-3">
+                        <h3 class="mx-1">Contacts</h3>
+                    </div>
+                    <hr>
+                    <div id="contacts">
+                        <div class="d-flex flex-column flex-nowrap">
+                            <div class="card shadow-sm mx-1 my-1 px-2 py-2 bg-light">
+                                <h5 class="mx-1">New Contact</h5>
+                                <form id="new-contact" name="new-contact">
+                                    <div class="mb-3">
+                                        <input class="form-control" type="text" name="name" placeholder="Name"
+                                            aria-label="default input example">
+                                    </div>
+                                    <div class="mb-3">
+                                        <input class="form-control" type="email" name="email" placeholder="Email"
+                                            aria-label="default input example">
+                                    </div>
+                                    <div class="mb-3">
+                                        <input class="form-control" type="number" name="number" placeholder="Number"
+                                            aria-label="default input example">
+                                    </div>
+                                    <button type="button" id="new-contact-btn" class="btn btn-primary">Save</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- TODO's -->
+                    <div class="mt-3">
+                        <h3 class="mx-1">Todo's</h3>
+                    </div>
+                    <hr>
+                    <div id="todo">
+                        <div class="d-flex flex-column flex-nowrap">
+                            <div class="card shadow-sm mx-1 my-1 px-2 py-2 bg-light">
+                                <form id="new-todo" name="new-todo" class="d-flex flex-row flex-nowrap">
+                                    <input class="form-control" type="text" name="description" placeholder="Description"
+                                        aria-label="default input example">
+                                    <button type="button" id="new-todo-btn" class="btn btn-primary">Add</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Modal -->
@@ -131,7 +241,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="close-application-modal-btn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="close-application-modal-btn" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Close</button>
                     <button type="button" id="save" class="btn btn-primary">Save</button>
                 </div>
             </div>

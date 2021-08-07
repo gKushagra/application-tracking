@@ -4,14 +4,21 @@ import { companies, roles } from "./static-data.js";
     let resumeBtn = document.getElementById('resume');
     let addRecordBtn = document.getElementById('add-record');
     let exportTableBtn = document.getElementById('export-btn');
-    let accountBtn = document.getElementById('account-btn');
+    // let accountBtn = document.getElementById('account-btn');
     let table = document.getElementById('applications-table');
+    let offCanvasEl = document.getElementById('viewRecord');
+    let offCanvas = new bootstrap.Offcanvas(offCanvasEl);
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 
     let applications = [];
     let resumes = [];
 
     function loadApplications() {
-        if (!getFromLocalStorage('applications') || getFromLocalStorage('applications').length === 0) {
+        if (!getFromLocalStorage('applications') ||
+            getFromLocalStorage('applications').length === 0) {
             applications = [];
             table.querySelector('tbody').childNodes.forEach(function (c) {
                 table.querySelector('tbody').removeChild(c);
@@ -21,14 +28,30 @@ import { companies, roles } from "./static-data.js";
 
             for (let i = 0; i < applications.length; i++) {
                 let newRowEl = document.createElement('tr');
+                newRowEl.setAttribute('data-app-id', applications[i].id);
                 let seqNoEl = document.createElement('th');
                 seqNoEl.setAttribute('scope', 'row');
-                seqNoEl.innerText = i+1;
+                seqNoEl.innerText = i + 1;
                 newRowEl.appendChild(seqNoEl);
                 for (const key in applications[i]) {
-                    if (["company", "position", "date", "link"].indexOf(key) >= 0) {
+                    if (["company", "status", "date", "link"].indexOf(key) >= 0) {
                         let cell = document.createElement('td');
-                        cell.innerText = applications[i][key];
+                        if (key === 'link') {
+                            let linkEl = document.createElement('a');
+                            if (!applications[i][key].includes('http://')) {
+                                linkEl.href = 'http://' + applications[i][key];
+                            } else {
+                                linkEl.href = applications[i][key];
+                            }
+                            linkEl.target = '_blank';
+                            linkEl.innerText = applications[i][key];
+                            linkEl.addEventListener('click', function (linkClickEv) {
+                                linkClickEv.stopPropagation();
+                            });
+                            cell.appendChild(linkEl);
+                        } else {
+                            cell.innerText = applications[i][key];
+                        }
                         newRowEl.appendChild(cell);
                     }
                 }
@@ -37,9 +60,68 @@ import { companies, roles } from "./static-data.js";
 
             table.querySelector('tbody').querySelectorAll('tr').forEach(row => {
                 row.addEventListener('click', function (event) {
-                    console.log(row);
-                    console.log(event.target);
                     // open slideover
+                    offCanvas.toggle();
+                    // initialize datepicker, companies and roles search
+                    commonComponentsInit(
+                        'date-offcanvas',
+                        'companiesListInput-offcanvas',
+                        'rolesListInput-offcanvas'
+                    );
+                    // get form
+                    let editForm = document.getElementById('edit-application');
+                    // get current application
+                    let currentApplication = applications.filter(function (app) {
+                        return app.id === row.getAttribute('data-app-id');
+                    });
+                    if (currentApplication.length > 0) {
+                        // patch data
+                        modifyForm(true);
+                        controlsVisibility(false);
+                        // add listener to edit button
+                        let editAppBtn = document.getElementById('edit-application-btn');
+                        let saveChangesBtn = document.getElementById('edit-application-save-btn');
+                        let discardChangesBtn = document.getElementById('edit-application-cancel-btn');
+                        toggleButtons(false);
+                        editAppBtn.addEventListener('click', function (editAppEv) {
+                            controlsVisibility(false);
+                            toggleButtons(true);
+                            discardChangesBtn.addEventListener('click', function (discardChangesEv) {
+                                controlsVisibility(true);
+                                toggleButtons(false);
+                            });
+                            saveChangesBtn.addEventListener('click', function (saveChangesEv) {
+                                controlsVisibility(true);
+                                toggleButtons(false);
+                                modifyForm(false);
+                                // console.log(currentApplication[0]);
+                                saveToLocalStorage('applications', applications);
+                            });
+                        });
+                        // common method in this scope
+                        function toggleButtons(_visible) {
+                            editAppBtn.style.visibility = _visible ? 'hidden' : 'visible';
+                            saveChangesBtn.style.visibility = _visible ? 'visible' : 'hidden';
+                            discardChangesBtn.style.visibility = _visible ? 'visible' : 'hidden';
+                        }
+                        function controlsVisibility(state) {
+                            editForm.querySelectorAll('input').forEach(function (i) {
+                                i.readOnly = state;
+                            });
+                        }
+                        function modifyForm(_patch) {
+                            editForm.querySelectorAll('input').forEach(function (i) {
+                                for (const key in currentApplication[0]) {
+                                    if (i.name === key) {
+                                        _patch ? i.value = currentApplication[0][key] :
+                                            currentApplication[0][key] = i.value
+                                    }
+                                }
+                            });
+                        }
+                        // handle contacts
+                        // handle todos
+                    }
                 });
             });
         }
@@ -143,8 +225,46 @@ import { companies, roles } from "./static-data.js";
 
     /** save new application */
     addRecordBtn.addEventListener('click', function (event) {
+        // initialize common components
+        commonComponentsInit(
+            'date',
+            'companiesListInput',
+            'rolesListInput'
+        );
+        // initilize save button
+        let saveBtn = document.getElementById('save');
+        saveBtn.addEventListener('click', function (event1) {
+            let form = document.getElementById('new-application');
+            let newApplication = {};
+            newApplication['id'] = uuidv4();
+            let newRowEl = document.createElement('tr');
+            let seqNoEl = document.createElement('th');
+            seqNoEl.setAttribute('scope', 'row');
+            seqNoEl.innerText = applications.length + 1;
+            newRowEl.appendChild(seqNoEl);
+            form.querySelectorAll('input').forEach(function (ctrl) {
+                console.log(ctrl.value);
+                newApplication[ctrl.name] = ctrl.value;
+                if (["company", "position", "date", "link"].indexOf(ctrl.name) >= 0) {
+                    let cell = document.createElement('td');
+                    cell.innerText = ctrl.value;
+                    newRowEl.appendChild(cell);
+                }
+            });
+            newApplication['contacts'] = [];
+            newApplication['todo'] = [];
+            applications.push(newApplication);
+            saveToLocalStorage('applications', applications);
+            table.querySelector('tbody').appendChild(newRowEl);
+            document.getElementById('close-application-modal-btn').click();
+        });
+    });
+
+    /** datepicker, companies and position selection */
+    function commonComponentsInit(dateInputName, companyInputId, rolesInputId) {
         // initialize datepicker
-        let date_input = $('input[name="date"]'); //our date input has the name "date"
+        // let date_input = $('input[name="date"]'); //our date input has the name "date"
+        let date_input = $(`input[id='${dateInputName}']`); //our date input has the name "date"
         let options = {
             format: 'mm/dd/yyyy',
             todayHighlight: true,
@@ -153,7 +273,8 @@ import { companies, roles } from "./static-data.js";
         };
         date_input.datepicker(options);
         // initialize company search
-        let companyInput = document.getElementById('companiesListInput');
+        // let companyInput = document.getElementById('companiesListInput');
+        let companyInput = document.getElementById(companyInputId);
         companyInput.addEventListener('input', function (companyInputEvent) {
             let filteredCompanies = companies.filter(c => {
                 return c["Company Name"].toLowerCase().indexOf(companyInput.value.toLowerCase()) >= 0
@@ -171,7 +292,8 @@ import { companies, roles } from "./static-data.js";
             });
         });
         // initialize role search
-        let roleInput = document.getElementById('rolesListInput');
+        // let roleInput = document.getElementById('rolesListInput');
+        let roleInput = document.getElementById(rolesInputId);
         roleInput.addEventListener('input', function (roleInputEvent) {
             let filteredRoles = roles.filter(r => {
                 return r.toLowerCase().indexOf(roleInput.value.toLowerCase()) >= 0
@@ -188,31 +310,7 @@ import { companies, roles } from "./static-data.js";
                 dataList.appendChild(optionEl);
             });
         });
-        // initilize save button
-        let saveBtn = document.getElementById('save');
-        saveBtn.addEventListener('click', function (event1) {
-            let form = document.getElementById('new-application');
-            let newApplication = {};
-            let newRowEl = document.createElement('tr');
-            let seqNoEl = document.createElement('th');
-            seqNoEl.setAttribute('scope', 'row');
-            seqNoEl.innerText = applications.length + 1;
-            newRowEl.appendChild(seqNoEl);
-            form.querySelectorAll('input').forEach(function (ctrl) {
-                console.log(ctrl.value);
-                newApplication[ctrl.name] = ctrl.value;
-                if (["company", "position", "date", "link"].indexOf(ctrl.name) >= 0) {
-                    let cell = document.createElement('td');
-                    cell.innerText = ctrl.value;
-                    newRowEl.appendChild(cell);
-                }
-            });
-            applications.push(newApplication);
-            saveToLocalStorage('applications', applications);
-            table.querySelector('tbody').appendChild(newRowEl);
-            document.getElementById('close-application-modal-btn').click();
-        });
-    });
+    }
 
     /** TODO */
     exportTableBtn.addEventListener('click', function (event) {
@@ -220,9 +318,9 @@ import { companies, roles } from "./static-data.js";
     });
 
     /** TODO */
-    accountBtn.addEventListener('click', function (event) {
-        console.log('account btn');
-    });
+    // accountBtn.addEventListener('click', function (event) {
+    //     console.log('account btn');
+    // });
 })()
 
 /** helpers */

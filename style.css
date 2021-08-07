@@ -1,5 +1,5 @@
-.icon-lg {
-  font-size: 32px !important;
+.icon-sm {
+  font-size: 28px !important;
   color: #424242 !important;
 }
 
@@ -15,4 +15,16 @@ table tbody tr:hover {
 .custom-link {
   text-decoration: underline;
   color: #1976d2;
+}
+
+#viewRecord {
+  width: 40vw !important;
+}
+
+.bg-white {
+  background-color: #ffffff !important;
+}
+
+.bg-light {
+  background-color: #fafafa !important;
 }
