@@ -5,6 +5,8 @@ import { companies, roles } from "./static-data.js";
     let addRecordBtn = document.getElementById('add-record');
     let exportTableBtn = document.getElementById('export-btn');
     // let accountBtn = document.getElementById('account-btn');
+    // let archivedAppsBtn = document.getElementById('archived-apps'); 
+    // let deletedAppsBtn = document.getElementById('deleted-apps');
     let table = document.getElementById('applications-table');
     let offCanvasEl = document.getElementById('viewRecord');
     let offCanvas = new bootstrap.Offcanvas(offCanvasEl);
@@ -19,6 +21,8 @@ import { companies, roles } from "./static-data.js";
 
     let applications = [];
     let resumes = [];
+    let archived = [];
+    let deleted = [];
 
     function loadApplications() {
         if (!getFromLocalStorage('applications') ||
@@ -59,6 +63,54 @@ import { companies, roles } from "./static-data.js";
                         newRowEl.appendChild(cell);
                     }
                 }
+                // row [application] archive and delete actions
+                let actionCell = document.createElement('td');
+                let deleteBtn = document.createElement('i');
+                let archiveBtn = document.createElement('i');
+                rowActionBtns([deleteBtn, archiveBtn], ["trash", "archive"]);
+                function rowActionBtns(_elArr, _elActions) {
+                    for (let i = 0; i < _elArr.length; i++) {
+                        _elArr[i].classList.add('bi');
+                        _elArr[i].classList.add(`bi-${_elActions[i]}`);
+                        _elArr[i].classList.add('clickable');
+                        _elArr[i].classList.add('icon-sm');
+                        _elArr[i].setAttribute('data-app-id', applications[i].id);
+                        _elArr[i].setAttribute('data-toggle', "tooltip");
+                        _elArr[i].setAttribute('data-placement', "bottom");
+                        _elArr[i].setAttribute('title', `${_elActions[i].toUpperCase()}`);
+                    }
+                }
+                actionCell.appendChild(archiveBtn);
+                archiveBtn.addEventListener('click', function (archiveEv) {
+                    archiveEv.stopPropagation();
+                    transferApplication(archiveEv.target.getAttribute('data-app-id'), "archive");
+                });
+                actionCell.appendChild(deleteBtn);
+                deleteBtn.addEventListener('click', function (delEv) {
+                    delEv.stopPropagation();
+                    transferApplication(delEv.target.getAttribute('data-app-id'), "delete");
+                });
+                // common method to archive or delete
+                function transferApplication(_id, _action) {
+                    let applicationIdx = applications.findIndex(function (app) {
+                        return app.id === _id
+                    });
+                    if (applicationIdx >= 0) {
+                        let splicedApplication = applications.splice(applicationIdx, 1)[0];
+                        if (!splicedApplication || splicedApplication.length === 0) return;
+                        if (_action === "archive") archived.push(splicedApplication);
+                        if (_action === "delete") deleted.push(splicedApplication);
+                        saveToLocalStorage('applications', applications);
+                        saveToLocalStorage('archived', archived);
+                        saveToLocalStorage('deleted', deleted);
+                        table.querySelector('tbody').childNodes.forEach(function (n) {
+                            if (n.getAttribute('data-app-id') === _id) {
+                                table.querySelector('tbody').removeChild(n);
+                            }
+                        });
+                    }
+                }
+                newRowEl.appendChild(actionCell);
                 table.querySelector('tbody').appendChild(newRowEl);
             }
 
@@ -418,6 +470,8 @@ import { companies, roles } from "./static-data.js";
     /** TODO */
     exportTableBtn.addEventListener('click', function (event) {
         // console.log('export table btn');
+        // check if no applications
+        if (applications.length === 0) return;
         let blob = new Blob([JSON.stringify(getFromLocalStorage('applications'))],
             { type: 'application/json' });
         let fileUrl = blobToURL(blob);

@@ -41,6 +41,10 @@
                     <i id="export-btn" class="bi bi-file-earmark-arrow-down icon-sm mx-1 my-1 px-1 py-1 clickable"
                         data-toggle="tooltip" data-placement="bottom" title="Export"></i>
                     <!-- <i id="account-btn" class="bi bi-person-circle icon-sm mx-1 my-1 px-1 py-1 clickable"></i> -->
+                    <!-- <i id="archived-apps" class="bi bi-archive icon-sm mx-1 my-1 px-1 py-1 clickable"
+                        data-toggle="tooltip" data-placement="bottom" title="Archived"></i> -->
+                    <!-- <i id="deleted-apps" class="bi bi-trash icon-sm mx-1 my-1 px-1 py-1 clickable" data-toggle="tooltip"
+                        data-placement="bottom" title="Deleted"></i> -->
                 </div>
             </div>
         </div>
@@ -58,6 +62,7 @@
                                     <th scope="col">Status</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Link</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -148,16 +153,16 @@
                         <div class="card shadow-sm mx-1 my-1 px-2 py-2 bg-light">
                             <form id="new-contact" name="new-contact">
                                 <div class="mb-3">
-                                    <input class="form-control" type="text" id="new-contact-name" name="name" placeholder="Name"
-                                        aria-label="default input example">
+                                    <input class="form-control" type="text" id="new-contact-name" name="name"
+                                        placeholder="Name" aria-label="default input example">
                                 </div>
                                 <div class="mb-3">
-                                    <input class="form-control" type="email" id="new-contact-email" name="email" placeholder="Email"
-                                        aria-label="default input example">
+                                    <input class="form-control" type="email" id="new-contact-email" name="email"
+                                        placeholder="Email" aria-label="default input example">
                                 </div>
                                 <div class="mb-3">
-                                    <input class="form-control" type="number" id="new-contact-cell" name="number" placeholder="Cell"
-                                        aria-label="default input example">
+                                    <input class="form-control" type="number" id="new-contact-cell" name="number"
+                                        placeholder="Cell" aria-label="default input example">
                                 </div>
                                 <button type="button" id="new-contact-btn" class="btn btn-primary">Add Contact</button>
                             </form>
@@ -174,8 +179,8 @@
                     <div class="d-flex flex-column flex-nowrap">
                         <div class="card shadow-sm mx-1 my-1 px-2 py-2 bg-light">
                             <form id="new-todo" name="new-todo" class="d-flex flex-row flex-nowrap">
-                                <input class="form-control" type="text" id="todo-input" name="description" placeholder="Description"
-                                    aria-label="default input example">
+                                <input class="form-control" type="text" id="todo-input" name="description"
+                                    placeholder="Description" aria-label="default input example">
                                 <button type="button" id="new-todo-btn" class="btn btn-primary">Add</button>
                             </form>
                         </div>
