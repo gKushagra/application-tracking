@@ -28,6 +28,8 @@ npm run build
 ```
 
 ## Download 
+[v1.1.0-beta](https://github.com/gKushagra/application-tracking/releases)
+
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
