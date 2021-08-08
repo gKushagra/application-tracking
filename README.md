@@ -17,11 +17,14 @@ to keep a track of your job applications at one place.
 2. Ability to search jobs across the web with capability to 
    capture link and credentials and automatically create application.
 
-## Build
+## Run Locally or Build
 
 ```bash
 # install dependencies
 npm install
+
+# run locally
+npm start
 
 # build using electron-builder
 npm run build
