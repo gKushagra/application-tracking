@@ -69,15 +69,15 @@ import { companies, roles } from "./static-data.js";
                 let archiveBtn = document.createElement('i');
                 rowActionBtns([deleteBtn, archiveBtn], ["trash", "archive"]);
                 function rowActionBtns(_elArr, _elActions) {
-                    for (let i = 0; i < _elArr.length; i++) {
-                        _elArr[i].classList.add('bi');
-                        _elArr[i].classList.add(`bi-${_elActions[i]}`);
-                        _elArr[i].classList.add('clickable');
-                        _elArr[i].classList.add('icon-sm');
-                        _elArr[i].setAttribute('data-app-id', applications[i].id);
-                        _elArr[i].setAttribute('data-toggle', "tooltip");
-                        _elArr[i].setAttribute('data-placement', "bottom");
-                        _elArr[i].setAttribute('title', `${_elActions[i].toUpperCase()}`);
+                    for (let j = 0; j < _elArr.length; j++) {
+                        _elArr[j].classList.add('bi');
+                        _elArr[j].classList.add(`bi-${_elActions[j]}`);
+                        _elArr[j].classList.add('clickable');
+                        _elArr[j].classList.add('icon-sm');
+                        _elArr[j].setAttribute('data-app-id', applications[i].id);
+                        _elArr[j].setAttribute('data-toggle', "tooltip");
+                        _elArr[j].setAttribute('data-placement', "bottom");
+                        _elArr[j].setAttribute('title', `${_elActions[j].toUpperCase()}`);
                     }
                 }
                 actionCell.appendChild(archiveBtn);
